@@ -1,0 +1,34 @@
+package views
+
+import (
+	"htmx/templ/models"
+)
+
+templ Index(title string, tasks models.TaskList) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<link rel="stylesheet" href="/public/styles.css"/>
+			<!-- Javascript -->
+			<script src="/public/scripts.js"></script>
+			<!--  HTMX  -->
+			<script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
+			<!-- Class Tools -->
+			<script src="https://unpkg.com/htmx-ext-class-tools@2.0.0/class-tools.js"></script>
+			<!-- Surreal -->
+			<script src="https://cdn.jsdelivr.net/gh/gnat/surreal@main/surreal.js"></script>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+		</head>
+		<body>
+			<div id="root">
+				<div class="container">
+					<h1>{ title }</h1>
+					@TasksContainer(tasks)
+					<button hx-put="/tasks" hx-target="#tasks-container" hx-swap="beforeend">Adicionar Tarefa</button>
+				</div>
+			</div>
+		</body>
+	</html>
+}

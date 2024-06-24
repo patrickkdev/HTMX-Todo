@@ -1,0 +1,58 @@
+package views
+
+import "htmx/templ/models"
+import "fmt"
+
+func id(task models.Task) string {
+	return fmt.Sprintf("%d", task.ID)
+}
+
+templ TaskItem(task models.Task) {
+	<form accept-charset="UTF-8" id={ "task-" + id(task) } hx-post={ "/tasks/" + id(task) } hx-target={ "#task-" + id(task) } hx-swap="outerHTML" class="task">
+		<input type="text" name="title" value={ task.Title }/>
+		<input type="text" name="description" value={ task.Description }/>
+		<input type="checkbox" name="isDone" id="isDoneCheckbox" checked?={ task.IsDone }/>
+		<div class="actions">
+			<button id={ "submit" + id(task) } disabled type="submit">
+				Salvar alterações
+			</button>
+			<button hx-delete={ "/tasks/" + id(task) } hx-confirm="Tem certeza que deseja excluir esta tarefa?" hx-target={ "#task-" + id(task) } hx-swap="delete swap:100ms">Excluir</button>
+		</div>
+		<script task-data={ templ.JSONString(task) }>
+      (() => {
+        const handleChange = (formID, submitButtonID) => {
+          const initial = {
+            "title": task.Title,
+            "description": task.Description,
+            "isDone": task.IsDone
+          }
+
+          const current = {
+            "title": document.querySelector(`#${formID} input[name='title']`).value,
+            "description": document.querySelector(`#${formID} input[name='description']`).value,
+            "isDone": document.querySelector(`#${formID} input[name='isDone']`).checked
+          }
+  
+          if (JSON.stringify(initial) === JSON.stringify(current)) {
+            setDisabled(`${submitButtonID}`)
+          } else {
+            unsetDisabled(`${submitButtonID}`)
+          }
+        }
+
+        const task = JSON.parse(document.currentScript.getAttribute('task-data'))
+        const form = me()
+        const formID = me().getAttribute('id')
+        const submitButtonID = me().querySelector('button[type="submit"]').getAttribute('id')
+  
+        document.querySelectorAll(`#${formID} input`).forEach((input) => {
+          input.addEventListener('input', () => handleChange(formID, submitButtonID))
+        })
+
+        me().on('htmx:beforeRequest', () => {
+          setDisabled(submitButtonID)
+        })
+      })()
+    </script>
+	</form>
+}

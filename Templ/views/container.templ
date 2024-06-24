@@ -1,0 +1,11 @@
+package views
+
+import "htmx/templ/models"
+
+templ TasksContainer(tasks models.TaskList) {
+	<div id="tasks-container">
+		for _, task := range tasks {
+			@TaskItem(task)
+		}
+	</div>
+}

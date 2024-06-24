@@ -1,0 +1,7 @@
+{{define "tasks-container"}}
+  <div id="tasks-container">
+    {{range .Tasks}}      
+      {{template "tasks-item" .}}
+    {{end}}
+  </div>
+{{end}}
